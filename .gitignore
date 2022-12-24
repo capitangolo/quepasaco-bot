@@ -4,6 +4,9 @@ npmenv.sh
 # Mac
 .DS_Store
 
+# VIM
+*.swp
+
 # Logs
 logs
 *.log

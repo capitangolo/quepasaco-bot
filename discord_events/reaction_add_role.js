@@ -2,9 +2,9 @@ const { Events } = require('discord.js');
 
 module.exports = function (m) {
   return {
-    name: Events.MessageReactionRemove,
+    name: Events.MessageReactionAdd,
     async execute(messageReaction, user) {
-      console.log("MessageReaction detected");
+      console.log("MessageReactionAdd detected");
       if (messageReaction.message.id === m.c.DISCORD_ROLES_MESSAGE_ID) {
         const emoji = messageReaction.emoji.name;
 

@@ -4,7 +4,7 @@ module.exports = function (m) {
   return {
     name: Events.MessageReactionRemove,
     async execute(messageReaction, user) {
-      console.log("MessageReaction detected");
+      console.log("MessageReactionRemove detected");
       if (messageReaction.message.id === m.c.DISCORD_ROLES_MESSAGE_ID) {
         const emoji = messageReaction.emoji.name;
 

@@ -57,7 +57,7 @@ module.exports = function (m) {
               .setRequired(true)
           )
       )
-      .setDefaultMemberPermissions(PermissionFlagsBits.Admin)
+      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     ,
     async execute(interaction) {
       let message = '';
