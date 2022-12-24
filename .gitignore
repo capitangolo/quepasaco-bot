@@ -1,3 +1,9 @@
+# bot specific
+npmenv.sh
+
+# Mac
+.DS_Store
+
 # Logs
 logs
 *.log

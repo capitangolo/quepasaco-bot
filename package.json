@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "discord.js": "^14.7.1"
+  },
+  "name": "quepasaco-bot",
+  "description": "Bot for the ¿Qué Pasa Có! Community - WIP Discord + Twitch",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "^8.30.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/capitangolo/quepasaco-bot.git"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/capitangolo/quepasaco-bot/issues"
+  },
+  "homepage": "https://github.com/capitangolo/quepasaco-bot#readme",
+  "scripts": {
+    "start": "node index.js",
+    "deploy-discord-commands": "node deploy-discord-commands.js"
+  }
+}
