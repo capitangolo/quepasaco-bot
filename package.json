@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "discord.js": "^14.7.1"
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.3.1"
   },
   "name": "quepasaco-bot",
   "description": "Bot for the ¿Qué Pasa Có! Community - WIP Discord + Twitch",
