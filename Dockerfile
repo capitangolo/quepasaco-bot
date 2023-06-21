@@ -1,9 +1,9 @@
 FROM node:18-bullseye-slim AS build
-WORKDIR /usr/src/pasaco-bot
-COPY . /usr/src/pasaco-bot
-RUN ./build.sh
+WORKDIR /usr/src/quepasaco_bot
+COPY . /usr/src/quepasaco_bot
+RUN npm install
 
 FROM gcr.io/distroless/nodejs18-debian11:latest
-COPY --from=build /usr/src/pasaco-bot /usr/pasaco-bot_backend
-WORKDIR /usr/src/pasaco-bot_backend
-CMD ["npm", "run", "start"]
+COPY --from=build /usr/src/quepasaco_bot /usr/src/quepasaco_bot/
+WORKDIR /usr/src/quepasaco_bot
+CMD ["index.js"]

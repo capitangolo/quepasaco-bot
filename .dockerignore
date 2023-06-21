@@ -1,0 +1,6 @@
+.eslintrc.json
+.dockerignore
+.git
+.github
+.gitignore
+Dockerfile
