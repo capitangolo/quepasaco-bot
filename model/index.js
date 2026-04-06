@@ -16,7 +16,7 @@ module.exports = function () {
 
   //
   // Discord Mappings
-  const dictorRolesMappingStorage = new JSONStorage(m.c.PASACOBOT_STORAGE_FOLDER, 'dicord_roles_mapping.json')
+  const dictorRolesMappingStorage = new JSONStorage(m.c.PASACOBOT_STORAGE_FOLDER, 'discord_roles_mapping.json')
   m.c.discordRolesMapping = new DiscordRolesMapping(dictorRolesMappingStorage);
 
   return m;
