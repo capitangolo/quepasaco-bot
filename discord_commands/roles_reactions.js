@@ -1,110 +1,114 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
+class RolesReactionsCommand {
+
+  #mapping = undefined;
+
+  constructor(mapping) {
+    this.#mapping = mapping
+  }
+
+  data = new SlashCommandBuilder()
+    .setName('roles_reactions')
+    .setDescription('Configures the roles reactions')
+    .addSubcommand(subcommand => subcommand
+      .setName('set_message_id')
+      .setDescription('Sets the message where users can set up their roles')
+      .addStringOption(option => option
+        .setName('messageid')
+        .setDescription('The messageID to look for reactions.')
+        .setRequired(true)
+      )
+    )
+    .addSubcommand(subcommand => subcommand
+      .setName('list_roles')
+      .setDescription('Provides information on the message and roles attached')
+      .addBooleanOption(option => option
+        .setName('code_output')
+        .setDescription('If true, it will output the commands needed to restore the actual config.')
+        .setRequired(false)
+      )
+    )
+    .addSubcommand(subcommand => subcommand
+      .setName('add_reaction_role')
+      .setDescription('Ties an emoji to a role')
+      .addStringOption(option => option
+        .setName('emoji')
+        .setDescription('The emoji that will represent the role.')
+        .setRequired(true)
+      )
+      .addMentionableOption(option => option
+        .setName('role')
+        .setDescription('The role that will be provided when the user reacts with the emoji.')
+        .setRequired(true)
+      )
+    )
+    .addSubcommand(subcommand => subcommand
+      .setName('remove_reaction_role')
+      .setDescription('Unlinks an emoji from a role')
+      .addStringOption(option => option
+        .setName('emoji')
+        .setDescription('The emoji that will represent the role.')
+        .setRequired(true)
+      )
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+
+  async execute(interaction) {
+    const subcommand = interaction.options.getSubcommand();
+    console.log(`Received command: roles_reactions ${subcommand}`);
+    const message = this[subcommand](interaction.options);
+    console.log(message);
+		await interaction.reply(message);
+  }
+
+  set_message_id(options) {
+    const messageID = options.getString('messageid');
+    this.#mapping.setMessageID(messageID);
+    return `Discord roles messageID set to: ${messageID}`;
+  }
+
+  list_roles(options) {
+    const code_output = options.getBoolean('code_output');
+    let message = "";
+    if (code_output) {
+      message = `/roles_reactions set_message_id messageid:${this.#mapping.getMessageID()}`;
+      this.#mapping.forEach((role, emoji, map) => {
+        message += `\n/roles_reactions add_reaction_role emoji:${emoji} role:@${role}`;
+      })
+    } else {
+      message = `Messageid:${this.#mapping.getMessageID}`;
+      this.#mapping.forEach((role, emoji, map) => {
+        message += `\n ${emoji} => @${role}`;
+      });
+    }
+    return message;
+  }
+
+  add_reaction_role(options) {
+    const emoji = options.getString('emoji');
+    const role = options.getMentionable('role');
+    this.#mapping.addMapping(emoji, role.name);
+    return `Assigned role @${role.name} to ${emoji}`;
+  }
+
+  remove_reaction_role(options) {
+    const emoji = options.getString('emoji');
+    const role = this.#mapping.removeMapping(emoji);
+    if (role) {
+      return `Removed role @${role} from ${emoji}`;
+    } else {
+      return `No role was set for ${emoji}`;
+    }
+  }
+}
+
 module.exports = function (m) {
-
+  const command = new RolesReactionsCommand(m.c.discordRolesMapping);
   return {
-    data: new SlashCommandBuilder()
-      .setName('roles_reactions')
-      .setDescription('Configures the roles reactions')
-      .addSubcommand(subcommand =>
-        subcommand
-          .setName('set_message_id')
-          .setDescription('Sets the message where users can set up their roles')
-          .addStringOption(option =>
-            option
-              .setName('messageid')
-              .setDescription('The messageID to look for reactions.')
-              .setRequired(true)
-          )
-      )
-      .addSubcommand(subcommand =>
-        subcommand
-          .setName('list_roles')
-          .setDescription('Provides information on the message and roles attached')
-          .addBooleanOption(option =>
-            option
-              .setName('code_output')
-              .setDescription('If true, it will output the commands needed to restore the actual config.')
-              .setRequired(false)
-          )
-
-      )
-      .addSubcommand(subcommand =>
-        subcommand
-          .setName('add_reaction_role')
-          .setDescription('Ties an emoji to a role')
-          .addStringOption(option =>
-            option
-              .setName('emoji')
-              .setDescription('The emoji that will represent the role.')
-              .setRequired(true)
-          )
-          .addMentionableOption(option =>
-            option
-              .setName('role')
-              .setDescription('The role that will be provided when the user reacts with the emoji.')
-              .setRequired(true)
-          )
-      )
-      .addSubcommand(subcommand =>
-        subcommand
-          .setName('remove_reaction_role')
-          .setDescription('Unlinks an emoji from a role')
-          .addStringOption(option =>
-            option
-              .setName('emoji')
-              .setDescription('The emoji that will represent the role.')
-              .setRequired(true)
-          )
-      )
-      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-    ,
+    data: command.data,
     async execute(interaction) {
-      let message = '';
-      let emoji = undefined;
-      let role = undefined;
-      switch(interaction.options.getSubcommand()) {
-        case 'set_message_id':
-          m.c.DISCORD_ROLES_MESSAGE_ID = interaction.options.getString('messageid');
-          message = `Discord roles messageID set to: ${m.c.DISCORD_ROLES_MESSAGE_ID}`;
-          console.log(message);
-		      await interaction.reply(message);
-          break;
-        case 'list_roles':
-          console.log(`Listing roles.`);
-          if (interaction.options.getBoolean('code_output')) {
-            message = `/roles_reactions set_message_id messageid:${m.c.DISCORD_ROLES_MESSAGE_ID}`;
-            m.c.DISCORD_ROLES_MAPPING.forEach((role, emoji, map) => {
-              message += `\n/roles_reactions add_reaction_role emoji:${emoji} role:@${role}`;
-            })
-          } else {
-            message = `Messageid:${m.c.DISCORD_ROLES_MESSAGE_ID}`;
-            m.c.DISCORD_ROLES_MAPPING.forEach((role, emoji, map) => {
-              message += `\n ${emoji} => @${role}`;
-            });
-          }
-		      await interaction.reply(message);
-          break;
-        case 'add_reaction_role':
-          emoji = interaction.options.getString('emoji');
-          role = interaction.options.getMentionable('role');
-          m.c.DISCORD_ROLES_MAPPING.set(emoji, role.name);
-          message = `Assigned role @${role.name} to ${emoji}`;
-          console.log(message);
-		      await interaction.reply(message);
-          break;
-        case 'remove_reaction_role':
-          emoji = interaction.options.getString('emoji');
-          if (m.c.DISCORD_ROLES_MAPPING.has(emoji)) {
-            role = m.c.DISCORD_ROLES_MAPPING.get(emoji);
-            message = `Removed role @${role} from ${emoji}`;
-          } else {
-            message = `No role set for ${emoji}`;
-          }
-          console.log(message);
-		      await interaction.reply(message);
-          break;
-      }
-	  },
+      command.execute(interaction)
+    }
   };
 };

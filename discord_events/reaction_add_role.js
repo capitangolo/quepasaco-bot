@@ -5,11 +5,11 @@ module.exports = function (m) {
     name: Events.MessageReactionAdd,
     async execute(messageReaction, user) {
       console.log("MessageReactionAdd detected");
-      if (messageReaction.message.id === m.c.DISCORD_ROLES_MESSAGE_ID) {
+      if (messageReaction.message.id === m.c.discordRolesMapping.getMessageID()) {
         const emoji = messageReaction.emoji.name;
 
-        if (m.c.DISCORD_ROLES_MAPPING.has(emoji)) {
-          const roleName = m.c.DISCORD_ROLES_MAPPING.get(emoji);
+        if (m.c.discordRolesMapping.hasRoleFor(emoji)) {
+          const roleName = m.c.discordRolesMapping.getRoleFor(emoji);
           var member = messageReaction.message.guild.members.cache.find(member => member.user === user);
           var role = messageReaction.message.guild.roles.cache.find(role => role.name === roleName);
 

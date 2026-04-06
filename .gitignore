@@ -1,5 +1,6 @@
 # bot specific
 npmenv.sh
+tmp
 
 # Mac
 .DS_Store
