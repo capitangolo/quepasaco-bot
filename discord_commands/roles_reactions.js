@@ -103,7 +103,7 @@ class RolesReactionsCommand {
   }
 }
 
-module.exports = function (m) {
+module.exports = function (m, u) {
   const command = new RolesReactionsCommand(m.c.discordRolesMapping);
   return {
     data: command.data,

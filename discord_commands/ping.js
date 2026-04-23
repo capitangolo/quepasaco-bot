@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 
-module.exports = function (m) {
+module.exports = function (m, u) {
 
   return {
     data: new SlashCommandBuilder()

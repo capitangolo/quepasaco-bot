@@ -2,6 +2,12 @@ const pjson = require('./package.json');
 console.log(`Hi, I'm Mapi, ${pjson.name} v${pjson.version}`);
 
 //
+// Load Utils
+console.log("Loading Utils…");
+const u = require('./util');
+
+
+//
 // Load Model
 console.log("Loading Model…");
 const m = require('./model')();
@@ -20,7 +26,7 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildMessageReactions
+    GatewayIntentBits.GuildMessageReactions,
   ],
   partials: [
     Partials.Message,
@@ -43,7 +49,7 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 for (const file of commandFiles) {
   console.log(` - ${file}`);
 	const filePath = path.join(commandsPath, file);
-	const command = require(filePath)(m);
+	const command = require(filePath)(m, u);
 	// Set a new item in the Collection with the key as the command name and the value as the exported module
 	if ('data' in command && 'execute' in command) {
 		client.commands.set(command.data.name, command);
@@ -79,7 +85,7 @@ const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'
 for (const file of eventFiles) {
   console.log(` - ${file}`);
 	const filePath = path.join(eventsPath, file);
-	const event = require(filePath)(m);
+	const event = require(filePath)(m, u);
 	if (event.once) {
 		client.once(event.name, (...args) => event.execute(...args));
 	} else {
